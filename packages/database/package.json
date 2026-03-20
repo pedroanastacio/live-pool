@@ -1,0 +1,15 @@
+{
+  "name": "@repo/database",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@nestjs/common": "^11",
+    "@nestjs/typeorm": "^11",
+    "pg": "^8",
+    "typeorm": "^0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
+  }
+}
