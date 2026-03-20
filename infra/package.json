@@ -2,7 +2,7 @@
   "name": "infra",
   "private": true,
   "scripts": {
-    "dev": "docker compose --env-file ../.env up -d",
+    "dev": "docker compose up -d",
     "stop": "docker compose down"
   }
 }

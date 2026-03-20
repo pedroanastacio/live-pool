@@ -18,6 +18,9 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@repo/database": ["packages/database/src", "packages/database/src/*"]
+    }
   }
 }
