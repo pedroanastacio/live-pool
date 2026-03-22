@@ -10,3 +10,30 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum PollStatus {
+  ACTIVE
+  CANCELLED
+  CLOSED
+}
+
+model Poll {
+  id  String @id @default(uuid())
+  title String
+  description String?
+  status PollStatus @default(ACTIVE)
+  expires_at DateTime
+  options PollOption[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PollOption {
+  id  String @id @default(uuid())
+  description String
+  order_index Int
+  poll_id String
+  poll Poll @relation(fields: [poll_id], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
