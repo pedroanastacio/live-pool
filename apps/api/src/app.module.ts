@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from '@repo/database';
+import { PrismaModule } from '@live-pool/database';
 
 @Module({
   imports: [
