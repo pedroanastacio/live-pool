@@ -9,6 +9,7 @@ import {
   ValidateNested,
   IsInt,
   Min,
+  ArrayMinSize,
 } from 'class-validator';
 
 export class CreatePollOptionDto {
@@ -38,6 +39,6 @@ export class CreatePollDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreatePollOptionDto)
-  @MinLength(2, { message: 'Poll must have at least two options' })
+  @ArrayMinSize(2, { message: 'Poll must have at least two options' })
   options: CreatePollOptionDto[];
 }
