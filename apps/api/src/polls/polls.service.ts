@@ -2,6 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService, PollStatus } from '@live-pool/database';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import {
+  PollResponseDto,
+  PollDeleteResponseDto,
+} from './dto/poll-response.dto';
 
 type PollUpdateData = {
   title?: string;
@@ -14,7 +18,7 @@ type PollUpdateData = {
 export class PollsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createPollDto: CreatePollDto) {
+  async create(createPollDto: CreatePollDto): Promise<PollResponseDto> {
     const { options, ...pollData } = createPollDto;
 
     return await this.prisma.poll.create({
@@ -38,7 +42,7 @@ export class PollsService {
     });
   }
 
-  async findAll() {
+  async findAll(): Promise<PollResponseDto[]> {
     return await this.prisma.poll.findMany({
       include: {
         options: {
@@ -53,7 +57,7 @@ export class PollsService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<PollResponseDto> {
     const poll = await this.prisma.poll.findUnique({
       where: { id },
       include: {
@@ -72,7 +76,10 @@ export class PollsService {
     return poll;
   }
 
-  async update(id: string, updatePollDto: UpdatePollDto) {
+  async update(
+    id: string,
+    updatePollDto: UpdatePollDto,
+  ): Promise<PollResponseDto> {
     const poll = await this.prisma.poll.findUnique({ where: { id } });
 
     if (!poll) {
@@ -101,7 +108,7 @@ export class PollsService {
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<PollDeleteResponseDto> {
     const poll = await this.prisma.poll.findUnique({ where: { id } });
 
     if (!poll) {
