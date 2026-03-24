@@ -15,6 +15,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@live-pool/typescript-config": "workspace:*",
     "@nestjs/common": "^11",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
