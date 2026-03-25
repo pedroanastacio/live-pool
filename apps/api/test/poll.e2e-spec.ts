@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/modules/app/app.module';
 import { PollStatus } from '@live-pool/database';
 import { setupApp, teardownApp, TestApp, cleanDatabase } from './helper';
 import { mockPoll } from './mocks/polls';

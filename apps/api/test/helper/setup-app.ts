@@ -7,7 +7,7 @@ import { Test } from '@nestjs/testing';
 import { App } from 'supertest/types';
 import { PrismaService } from '@live-pool/database';
 import { setupPrisma } from './index';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../src/modules/app/app.module';
 
 export interface TestApp {
   app: INestApplication<App>;
