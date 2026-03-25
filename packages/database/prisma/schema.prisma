@@ -22,18 +22,37 @@ model Poll {
   title String
   description String?
   status PollStatus @default(ACTIVE)
-  expires_at DateTime
+  expiresAt DateTime @map("expires_at")
   options PollOption[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  votes Vote[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("poll")
 }
 
 model PollOption {
   id  String @id @default(uuid())
   description String
-  order_index Int
-  poll_id String
-  poll Poll @relation(fields: [poll_id], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  ordeIndex Int @map("order_index")
+  pollId String @map("poll_id")
+  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes Vote[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("poll_option")
+}
+
+model Vote {
+  id String @id @default(uuid())
+  pollId String @map("poll_id")
+  pollOptionId String @map("poll_option_id")
+  votedAt DateTime @default(now()) @map("voted_at")
+  poll Poll @relation(fields: [pollId], references: [id])
+  pollOption PollOption @relation(fields: [pollOptionId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("vote")
 }

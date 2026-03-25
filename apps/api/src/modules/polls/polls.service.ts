@@ -11,7 +11,7 @@ type PollUpdateData = {
   title?: string;
   description?: string | null;
   status?: PollStatus;
-  expires_at?: Date;
+  expiresAt?: Date;
 };
 
 @Injectable()
@@ -24,18 +24,18 @@ export class PollsService {
     return await this.prisma.poll.create({
       data: {
         ...pollData,
-        expires_at: new Date(pollData.expires_at),
+        expiresAt: new Date(pollData.expiresAt),
         options: {
           create: options.map((option) => ({
             description: option.description,
-            order_index: option.order_index,
+            ordeIndex: option.orderIndex,
           })),
         },
       },
       include: {
         options: {
           orderBy: {
-            order_index: 'asc',
+            ordeIndex: 'asc',
           },
         },
       },
@@ -47,7 +47,7 @@ export class PollsService {
       include: {
         options: {
           orderBy: {
-            order_index: 'asc',
+            ordeIndex: 'asc',
           },
         },
       },
@@ -63,7 +63,7 @@ export class PollsService {
       include: {
         options: {
           orderBy: {
-            order_index: 'asc',
+            ordeIndex: 'asc',
           },
         },
       },
@@ -90,8 +90,8 @@ export class PollsService {
       title: updatePollDto.title,
       description: updatePollDto.description,
       status: updatePollDto.status,
-      expires_at: updatePollDto.expires_at
-        ? new Date(updatePollDto.expires_at)
+      expiresAt: updatePollDto.expiresAt
+        ? new Date(updatePollDto.expiresAt)
         : undefined,
     };
 
@@ -101,7 +101,7 @@ export class PollsService {
       include: {
         options: {
           orderBy: {
-            order_index: 'asc',
+            ordeIndex: 'asc',
           },
         },
       },

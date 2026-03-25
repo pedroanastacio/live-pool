@@ -38,7 +38,7 @@ describe('Polls E2E', () => {
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('title', mockPoll.title);
       expect(response.body).toHaveProperty('description', mockPoll.description);
-      expect(response.body).toHaveProperty('expires_at', mockPoll.expires_at);
+      expect(response.body).toHaveProperty('expiresAt', mockPoll.expiresAt);
       expect(response.body).toHaveProperty('status');
       expect(response.body.status).toBe(PollStatus.ACTIVE);
       expect(response.body).toHaveProperty('createdAt');
@@ -67,7 +67,7 @@ describe('Polls E2E', () => {
     it('should return 400 when creating poll with less than 2 options', async () => {
       const payload = {
         ...mockPoll,
-        options: [{ description: 'Option 1', order_index: 0 }],
+        options: [{ description: 'Option 1', orderIndex: 0 }],
       };
       const response = await request(testApp.app.getHttpServer())
         .post(baseUrl)
@@ -94,10 +94,7 @@ describe('Polls E2E', () => {
         'description',
         mockPoll.description,
       );
-      expect(response.body[0]).toHaveProperty(
-        'expires_at',
-        mockPoll.expires_at,
-      );
+      expect(response.body[0]).toHaveProperty('expiresAt', mockPoll.expiresAt);
       expect(response.body[0]).toHaveProperty('status');
       expect(response.body[0].status).toBe(PollStatus.ACTIVE);
       expect(response.body[0]).toHaveProperty('createdAt');
@@ -121,7 +118,7 @@ describe('Polls E2E', () => {
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('title', mockPoll.title);
       expect(response.body).toHaveProperty('description', mockPoll.description);
-      expect(response.body).toHaveProperty('expires_at', mockPoll.expires_at);
+      expect(response.body).toHaveProperty('expiresAt', mockPoll.expiresAt);
       expect(response.body).toHaveProperty('status');
       expect(response.body.status).toBe(PollStatus.ACTIVE);
       expect(response.body).toHaveProperty('createdAt');

@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from '@live-pool/database';
 import { PollsModule } from '../polls/polls.module';
+import { VotesModule } from '../votes/votes.module';
+import { EventsModule } from '../../events/events.module';
 
 @Module({
   imports: [
@@ -11,7 +13,9 @@ import { PollsModule } from '../polls/polls.module';
       isGlobal: true,
     }),
     PrismaModule,
+    EventsModule,
     PollsModule,
+    VotesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

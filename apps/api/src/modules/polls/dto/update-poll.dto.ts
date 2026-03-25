@@ -16,5 +16,5 @@ export class UpdatePollDto {
 
   @IsDateString()
   @IsOptional()
-  expires_at?: string;
+  expiresAt?: string;
 }

@@ -3,7 +3,7 @@ import { PollStatus } from '@live-pool/database';
 export class PollOptionResponseDto {
   id: string;
   description: string;
-  order_index: number;
+  ordeIndex: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,7 +13,7 @@ export class PollResponseDto {
   title: string;
   description: string | null;
   status: PollStatus;
-  expires_at: Date;
+  expiresAt: Date;
   options: PollOptionResponseDto[];
   createdAt: Date;
   updatedAt: Date;

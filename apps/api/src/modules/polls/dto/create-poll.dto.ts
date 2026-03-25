@@ -19,7 +19,7 @@ export class CreatePollOptionDto {
 
   @IsInt()
   @Min(0)
-  order_index: number;
+  orderIndex: number;
 }
 
 export class CreatePollDto {
@@ -34,7 +34,7 @@ export class CreatePollDto {
 
   @IsDateString()
   @IsNotEmpty()
-  expires_at: string;
+  expiresAt: string;
 
   @IsArray()
   @ValidateNested({ each: true })
