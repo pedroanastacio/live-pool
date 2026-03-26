@@ -1,17 +1,18 @@
-import { Controller, Post, Body, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { EventDispatcher, VoteCastEvent } from '../../events';
+import { VoteResponseDto } from './dto';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('votes')
 export class VotesController {
   constructor(private readonly eventDispatcher: EventDispatcher) {}
 
   @Post()
-  @HttpCode(200)
-  async create(
-    @Body() createVoteDto: CreateVoteDto,
-  ): Promise<{ message: string }> {
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK, type: VoteResponseDto })
+  async create(@Body() createVoteDto: CreateVoteDto): Promise<VoteResponseDto> {
     const voteCastEvent = new VoteCastEvent(createVoteDto);
     await this.eventDispatcher.notify(voteCastEvent);
 

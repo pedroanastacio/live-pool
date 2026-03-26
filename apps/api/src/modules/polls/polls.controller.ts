@@ -16,27 +16,33 @@ import {
   PollResponseDto,
   PollDeleteResponseDto,
 } from './dto/poll-response.dto';
+import { Poll } from '@live-pool/database';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('polls')
 export class PollsController {
   constructor(private readonly pollsService: PollsService) {}
 
   @Post()
-  create(@Body() createPollDto: CreatePollDto): Promise<PollResponseDto> {
+  @ApiResponse({ status: HttpStatus.CREATED, type: PollResponseDto })
+  create(@Body() createPollDto: CreatePollDto): Promise<Poll> {
     return this.pollsService.create(createPollDto);
   }
 
   @Get()
+  @ApiResponse({ status: HttpStatus.OK, type: PollResponseDto, isArray: true })
   findAll(): Promise<PollResponseDto[]> {
     return this.pollsService.findAll();
   }
 
   @Get(':id')
+  @ApiResponse({ status: HttpStatus.OK, type: PollResponseDto })
   findOne(@Param('id') id: string): Promise<PollResponseDto> {
     return this.pollsService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiResponse({ status: HttpStatus.OK, type: PollResponseDto })
   update(
     @Param('id') id: string,
     @Body() updatePollDto: UpdatePollDto,
@@ -46,6 +52,7 @@ export class PollsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.OK, type: PollDeleteResponseDto })
   remove(@Param('id') id: string): Promise<PollDeleteResponseDto> {
     return this.pollsService.remove(id);
   }
