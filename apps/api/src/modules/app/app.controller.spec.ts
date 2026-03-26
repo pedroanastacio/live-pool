@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,8 +17,11 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello 👋🏻"', () => {
-      expect(appController.getHello()).toBe('Hello 👋🏻');
+    it('should return health check', () => {
+      expect(appController.getHello()).toEqual({
+        status: 'OK',
+        date: expect.any(Date),
+      });
     });
   });
 });
