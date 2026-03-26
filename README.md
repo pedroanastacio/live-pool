@@ -6,9 +6,9 @@ LivePool is a platform designed for streamers and content creators to create, ma
 
 ---
 
-## Tech & Tools
+## 🛠️ Tech & Tools
 
-### Frontend
+### Front-end
 
 <div align="left" style="display: flex; gap: 16px; flex-wrap: wrap;">
   <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" height="30"/>
@@ -18,7 +18,7 @@ LivePool is a platform designed for streamers and content creators to create, ma
   <img src="https://img.shields.io/badge/TanStack%20Query-FF4154?style=for-the-badge&logo=react-query&logoColor=white" alt="TanStack Query" height="30"/>
 </div>
 
-### Backend
+### Back-end
 
 <div align="left" style="display: flex; gap: 16px; flex-wrap: wrap;">
   <img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS" height="30"/>
