@@ -1,18 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService, PollStatus } from '@live-pool/database';
+import { PrismaService, Poll } from '@live-pool/database';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import {
   PollResponseDto,
   PollDeleteResponseDto,
 } from './dto/poll-response.dto';
-
-type PollUpdateData = {
-  title?: string;
-  description?: string | null;
-  status?: PollStatus;
-  expiresAt?: Date;
-};
 
 @Injectable()
 export class PollsService {
@@ -86,7 +79,7 @@ export class PollsService {
       throw new NotFoundException(`Poll with ID "${id}" not found`);
     }
 
-    const data: PollUpdateData = {
+    const data: Partial<Poll> = {
       title: updatePollDto.title,
       description: updatePollDto.description,
       status: updatePollDto.status,
