@@ -1,6 +1,9 @@
 {
   "extends": "@live-pool/typescript-config/node.json",
   "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolvePackageJsonExports": false,
     "outDir": "./dist",
     "baseUrl": "./",
     "declaration": true
