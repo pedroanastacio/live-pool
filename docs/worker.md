@@ -1,83 +1,132 @@
-# Queues and Workers - Voting Platform
+# Worker - Vote Processing
+
+## Status
+
+**Planned** - The worker application has not been implemented yet.
+
+This document describes the planned architecture for background vote processing.
+
+---
+
+## Overview
+
+The worker is responsible for consuming vote messages from RabbitMQ, processing them, and broadcasting real-time updates via WebSocket.
+
+**Votes are anonymous** - there is no user identification or user-vote association.
+
+---
 
 ## Technologies
-- **Messaging Queue**: RabbitMQ
-- **Cache / Locking**: Redis
+
+- **Messaging Queue**: RabbitMQ (Consumer)
+- **Cache**: Redis
 - **Worker**: NestJS + TypeScript
 - **Database**: PostgreSQL via Prisma
+- **Real-time**: WebSocket
 - **Testing**: Jest
+
+---
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                        RabbitMQ                      │
-│                                                      │
-│  ┌───────────────────┐       ┌────────────────────┐  │
-│  │ votes_exchange    │       │ votes_exchange     │  │
-│  │   (direct)        │       │   (direct)         │  │
-│  └─────────┬─────────┘       └──────────┬─────────┘  │
-│            │                            │            │
-│            ▼                            ▼            │
-│  ┌───────────────────┐       ┌────────────────────┐  │
-│  │ vote_events queue │       │ notification_queue │  │
-│  └─────────┬─────────┘       └──────────┬─────────┘  │
-└────────────┼────────────────────────────┼────────────┘
-             │                            │
-             ▼                            ▼
-┌─────────────────────────┐    ┌──────────────────────────┐
-│    VoteProcessor        │    │    NotificationWorker    │
-│    Worker               │    │    Worker                │
-│                         │    │                          │
-│  • Validate vote        │    │  • Receive events        │
-│  • Deduplicate          │    │  • Push to WebSocket     │
-│  • Persist to DB        │    │  • Log for audit         │
-│  • Update Redis cache   │    │                          │
-│  • Publish notification │    │                          │
-└────────────┬────────────┘    └─────────────┬────────────┘
-             │                               │
-             ▼                               ▼
-     PostgreSQL (votes)              WebSocket → Dashboard
++---------------------------------------------------+
+|                     RabbitMQ                       |
+|                                                    |
+|   vote_cast_exchange (direct)                          |
+|         |                                          |
+|         v                                          |
+|   vote_cast queue                                |
++---------------------------+------------------------+
+                            |
+                            v
++---------------------------------------------------+
+|              Worker (apps/worker)                 |
+|                                                    |
+|   +--------------------------------------------+  |
+|   |           VoteProcessor                    |  |
+|   |                                            |  |
+|   |  - Consume vote events                     |  |
+|   |  - Persist to PostgreSQL                    |  |
+|   |  - Update Redis cache                       |  |
+|   |  - WebSocket broadcast                     |  |
+|   +--------------------------------------------+  |
++---------------------------+------------------------+
+                            |
+              +-------------+-------------+
+              v                           v
+        PostgreSQL                WebSocket -> Clients
+              |
+              v
+           Redis (cache)
 ```
+
+---
+
+## Simplified Architecture
+
+```
+Vote Event -> Worker -> PostgreSQL (persist)
+                         -> Redis (update cache)
+                         -> WebSocket (broadcast)
+```
+
+---
 
 ## Worker Functions
 
 ### VoteProcessor
-- Consumes messages from `vote_events` queue
-- Validates vote integrity and prevents duplicates
+
+- Consumes messages from `vote_cast` queue
+- Validates vote integrity
 - Persists votes to PostgreSQL
 - Updates Redis cache for real-time results
-- Publishes update event to `notification_queue`
+- Broadcasts real-time updates via WebSocket
 
-### NotificationWorker
-- Consumes messages from `notification_queue`
-- Sends real-time updates via WebSocket to connected dashboards
-- Maintains audit logs for all notifications
+---
 
 ## Message Schema
 
-### Vote Event (vote_events queue)
+### Vote Event (vote_cast queue)
+
 ```json
 {
-  "voteId": "uuid",
-  "userId": "uuid",
-  "voteOption": "A",
-  "voteTime": "2025-01-15T10:30:00Z"
+  "id": "uuid",
+  "pollId": "uuid",
+  "pollOptionId": "uuid",
+  "votedAt": "2025-01-15T10:30:00Z"
 }
 ```
 
-### Notification Event (notification_queue)
-```json
-{
-  "voteId": "uuid",
-  "totalVotes": 123,
-  "optionVotes": {
-    "A": 50,
-    "B": 73
-  }
-}
-```
+---
 
 ## Redis Usage
+
 - **Cache**: Real-time vote counts for fast reads
-- **Locking**: Distributed lock for vote deduplication
+- **TTL**: Keys expire after poll closes
+
+> See [Redis Cache Strategy](redis-cache.md) for detailed implementation.
+
+---
+
+## Data Flow
+
+```
+1. POST /votes (API)
+       |
+       v
+2. EventDispatcher -> VoteCastEvent
+       |
+       v
+3. RabbitMQ Producer -> vote_cast_exchange
+       |
+       v
+4. VoteProcessor (Worker) <- vote_cast queue
+       |
+       +-> PostgreSQL (persist vote)
+       |
+       +-> Redis (update cache)
+       |
+       v
+5. WebSocket -> Clients (real-time update)
+```

@@ -11,108 +11,132 @@ The monorepo is powered by:
 
 ---
 
-## 📁 Root Structure
+## Root Structure
+
 ```
 root/
 │
-├─ docs/ # 
-├─ apps/ # Executable applications (deployable services)
-├─ packages/ # Shared libraries used by apps
+├─ docs/                    # Documentation
+├─ apps/                    # Executable applications (deployable services)
+├─ packages/                # Shared libraries used by apps
+├─ infra/                   # Infrastructure (Docker, configs)
 │
-├─ turbo.json # Turborepo task pipeline configuration
-├─ pnpm-workspace.yaml # PNPM workspace definition
-├─ package.json # Root scripts and dev dependencies
+├─ turbo.json               # Turborepo task pipeline configuration
+├─ pnpm-workspace.yaml      # PNPM workspace definition
+├─ package.json             # Root scripts and dev dependencies
 └─ README.md
 ```
 
-## 🚀 Apps Directory
+---
+
+## Apps Directory
 
 The `apps` folder contains **standalone applications**.  
 Each app has its own runtime, environment variables, and deployment pipeline.
 
-### Structure
+### Current Structure
+
 ```
 apps/
-├─ ui/ # Frontend application
-├─ api/ # Backend REST/WebSocket API
-└─ worker/ # Background processing workers
+├─ api/                    # Backend REST/WebSocket API
+├─ messaging/              # RabbitMQ producer (in progress)
+└─ web/                    # Next.js frontend [Planned]
 ```
 
 ### Applications
 
-#### 🖥️ UI — Frontend
-- Built with Next.js + TypeScript
-- Responsible for dashboard and public voting pages
-- Communicates with API via REST and WebSocket
-- Independently deployable
+#### API — Backend Server
 
-#### 🔌 API — Backend Server
-- Built with NestJS + TypeScript
-- Handles authentication, poll management, voting, and real-time updates
-- Integrates with PostgreSQL, Redis, and RabbitMQ
-- Exposes REST and WebSocket endpoints
+- **Framework**: NestJS + TypeScript
+- **Purpose**: Handles poll management, voting, and real-time updates
+- **Integrations**: PostgreSQL, Redis (planned), RabbitMQ (planned)
+- **Endpoints**: REST and WebSocket
+- **Status**: Active development
 
-#### ⚙️ Worker — Background Processing
-- Built with NestJS + TypeScript
-- Consumes RabbitMQ queues
-- Processes votes asynchronously
-- Updates database and cache
-- Emits real-time updates via WebSocket gateway
+#### Messaging — Message Producer
 
+- **Framework**: NestJS + TypeScript
+- **Purpose**: RabbitMQ producer for async vote processing
+- **Status**: Placeholder (to be implemented)
 
-## 📦 Packages Directory
+#### Web — Frontend Application [Planned]
+
+- **Framework**: Next.js + TypeScript
+- **Purpose**: Dashboard and public voting pages
+- **Features**: OAuth authentication, real-time updates via WebSocket
+
+---
+
+## Packages Directory
 
 The `packages` folder contains **shared libraries** used across multiple apps.
 
 These packages are not deployable by themselves.
 
-### Structure
+### Current Structure
+
 ```
 packages/
-├─ types/ # Shared TypeScript types and interfaces
-├─ ui-kit/ # Reusable UI components
-├─ utils/ # Utility functions and helpers
-├─ config/ # Shared Biome, TSConfig, Prettier configs
-└─ sdk/ # Typed API client for frontend
+├─ ui/                     # Reusable UI components (design system)
+├─ database/               # Prisma ORM and database schema
+├─ eslint-config           # Shared ESLint configurations
+└─ typescript-config/      # Shared TypeScript configurations
 ```
 
 ### Shared Packages
 
-#### 🧩 types
-Centralizes shared contracts between frontend, backend, and workers:
-- API request/response types
-- WebSocket event types
-- Domain models (Poll, Vote, User)
+#### UI — Design System
 
-#### 🎨 ui-kit
-Reusable design system components:
-- Buttons
-- Modals
-- Form elements
-- Layout components
+- **Location**: `packages/ui`
+- **Purpose**: Reusable component library
+- **Components**: Button, Card, Code
+- **Tech**: TypeScript, TailwindCSS, shadcn/ui patterns
 
-Ensures consistent UI across the platform.
+#### Database — Prisma Layer
 
-#### 🛠 utils
-Shared helper functions:
-- Date formatting
-- Validation helpers
-- Data transformations
-- Logging helpers
+- **Location**: `packages/database`
+- **Purpose**: Database schema and ORM
+- **Models**: Poll, PollOption, Vote
+- **Tech**: Prisma, PostgreSQL
 
-#### ⚙️ config
-Shared development configurations:
-- ESLint rules
-- Prettier formatting
-- TypeScript base configs
+#### ESLint Config
 
-Ensures consistent code style across all apps.
+- **Location**: `packages/eslint-config`
+- **Purpose**: Shared ESLint rules
+- **Configs**: Base, React, Next.js
 
-#### 🔗 sdk
-Frontend SDK for consuming the API:
-- Typed HTTP client
-- Centralized endpoints
-- Request/response typing
-- Error handling abstraction
+#### TypeScript Config
 
-Improves frontend developer experience and type safety.
+- **Location**: `packages/typescript-config`
+- **Purpose**: Shared TypeScript configurations
+
+---
+
+## Infrastructure Directory
+
+The `infra` folder contains infrastructure configurations.
+
+```
+infra/
+├─ docker-compose.yml      # PostgreSQL service
+├─ package.json            # Infrastructure scripts
+├─ .env                    # Environment variables
+└─ .env.example            # Environment template
+```
+
+---
+
+## Planned Additions
+
+The following apps/packages are planned for future implementation:
+
+### Apps
+
+- **web**: Next.js frontend application
+- **worker**: Background job processor for queue consumption
+
+### Packages
+
+- **utils**: Shared utility functions
+- **types**: Centralized TypeScript types
+- **sdk**: Typed API client for frontend

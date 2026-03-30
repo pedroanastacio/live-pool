@@ -39,3 +39,6 @@ yarn-error.log*
 
 # Config
 /tasks
+.opencode
+.agents
+AGENTS.md

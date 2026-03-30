@@ -1,92 +1,163 @@
-# UI - Voting Platform for Streamers
+# UI - LivePool
 
-## Technologies
-- **Framework**: Next.js + TypeScript
+## Overview
+
+The UI layer of LivePool consists of two distinct parts:
+
+1. **Design System** (`packages/ui`) - Reusable component library
+2. **Web Application** (`apps/web`) - Next.js application for end users
+
+---
+
+## Design System - packages/ui
+
+The design system provides foundational UI components used across the platform.
+
+### Technologies
+
+- **Framework**: TypeScript
+- **Styling**: TailwindCSS + shadcn/ui patterns
+- **Testing**: Jest + React Testing Library
+
+### Components
+
+| Component    | Description                     |
+| ------------ | ------------------------------- |
+| `Button.tsx` | Reusable button with variants   |
+| `Card.tsx`   | Container component for content |
+| `Code.tsx`   | Code snippet display            |
+
+### Usage
+
+```tsx
+import { Button, Card, Code } from "@live-pool/ui";
+
+function MyComponent() {
+  return (
+    <Card>
+      <Code>console.log("Hello")</Code>
+      <Button>Click me</Button>
+    </Card>
+  );
+}
+```
+
+---
+
+## Web Application - apps/web [Planned]
+
+A Next.js application for creators and voters.
+
+### Technologies
+
+- **Framework**: Next.js (App Router) + TypeScript
 - **Styling**: TailwindCSS + shadcn/ui
 - **State Management**: Zustand
-- **Data Fetching & Caching**: TanStack Query
-- **Testing**: Jest + React Testing Library
+- **Data Fetching**: TanStack Query
+- **Real-time**: WebSocket Client
 - **Authentication**: OAuth2 (Google, Twitch)
-- **WebSocket Client**: Real-time vote updates
 
-## Folder Structure
+### Planned Features
+
+#### Creator Dashboard
+
+- Google/Twitch OAuth login
+- Poll management (create, edit, delete)
+- Vote listing and history
+- Real-time results chart by option
+- Poll status control (active/closed)
+
+#### Public Voting Page
+
+- Vote via shareable link
+- Real-time updates with WebSocket
+- Instant vote counting
+
+### Planned Folder Structure
+
 ```
-/src
-├── app/                    # Next.js App Router
-│   ├── (auth)/            # Authentication group
-│   │   ├── login/page.tsx
-│   │   └── layout.tsx
-│   ├── (dashboard)/       # Dashboard group
-│   │   ├── dashboard/page.tsx
-│   │   └── layout.tsx
-│   ├── votes/
+apps/web/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── (auth)/            # Authentication group
+│   │   │   ├── login/
+│   │   │   └── layout.tsx
+│   │   ├── (dashboard)/       # Dashboard group
+│   │   │   ├── polls/
+│   │   │   │   ├── new/
+│   │   │   │   └── [id]/
+│   │   │   └── layout.tsx
+│   │   ├── votes/
+│   │   │   └── [id]/         # Public voting page
+│   │   ├── layout.tsx
 │   │   └── page.tsx
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home
+│   │
+│   ├── components/
+│   │   ├── ui/                # shadcn/ui components
+│   │   ├── polls/             # Poll-specific components
+│   │   └── charts/            # Vote visualization
+│   │
+│   ├── lib/                   # Utilities
+│   │   ├── api.ts
+│   │   ├── websocket.ts
+│   │   └── utils.ts
+│   │
+│   ├── stores/                # Zustand stores
+│   │   ├── authStore.ts
+│   │   └── voteStore.ts
+│   │
+│   ├── hooks/                 # Custom hooks
+│   │   ├── useAuth.ts
+│   │   ├── usePolls.ts
+│   │   └── useWebSocket.ts
+│   │
+│   └── types/                 # TypeScript types
+│       └── index.ts
 │
-├── components/
-│   ├── ui/                # shadcn/ui components
-│   │   ├── Button.tsx
-│   │   ├── Modal.tsx
-│   │   └── Table.tsx
-│   ├── charts/
-│   │   └── VoteChart.tsx
-│   └── auth/
-│       └── LoginButton.tsx
-│
-├── lib/                   # Utilities and configurations
-│   ├── api.ts
-│   ├── websocket.ts
-│   └── utils.ts
-│
-├── stores/                # Zustand stores
-│   ├── authStore.ts
-│   └── voteStore.ts
-│
-├── hooks/                 # Custom hooks
-│   ├── useAuth.ts
-│   └── useVotes.ts
-│
-├── types/                 # TypeScript types
-│   └── index.ts
-│
-└── __tests__/             # Tests
-    ├── unit/
-    └── e2e/
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── next.config.js
 ```
 
-### Directory Description
+### API Integration
 
-| Directory | Description |
-|-----------|-------------|
-| `app/` | Application routes (Next.js App Router) |
-| `components/ui/` | Base shadcn/ui components |
-| `components/charts/` | Vote visualization charts |
-| `lib/` | API, WebSocket, and utility configurations |
-| `stores/` | Global state with Zustand |
-| `hooks/` | Custom hooks for reusable logic |
-| `types/` | TypeScript type definitions |
-| `__tests__/` | Unit and e2e tests |
-
-## Main Features
-1. **Creator Dashboard**
-   - Google/Twitch login
-   - Vote listing
-   - Create new vote
-   - Vote history
-   - Results chart by option
-   - Vote status (active / closed)
-2. **Public Voting Page**
-   - Simple voting via link
-   - Real-time updates with WebSocket
-   - Vote validation (1 per user)
-   - Instant vote counting
-
-## API Integration
-- **REST**: Vote and user CRUD
+- **REST**: Poll CRUD, vote submission
 - **WebSocket**: Real-time vote updates
 - **Authentication**: JWT Bearer Token
 
-## Testing
-- Unit: Validate components, stores, hooks
-- E2E: Login, vote creation, vote submission, charts
+### Development
+
+```bash
+# Run development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Run tests
+pnpm test
+```
+
+---
+
+## Component Architecture
+
+The UI follows a compound component pattern:
+
+```
+┌─────────────────────────────────────────┐
+│              pages/                      │
+│  (Dashboard, Vote Page)                  │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│           components/                    │
+│  (PollCard, VoteButton, ResultsChart)    │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│           packages/ui/                    │
+│  (Button, Card, Input - Design System)   │
+└─────────────────────────────────────────┘
+```
