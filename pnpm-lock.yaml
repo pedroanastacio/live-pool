@@ -141,9 +141,6 @@ importers:
       amqplib:
         specifier: ^0.10.4
         version: 0.10.9
-      dotenv:
-        specifier: ^17.3.1
-        version: 17.3.1
     devDependencies:
       '@live-pool/typescript-config':
         specifier: workspace:*
