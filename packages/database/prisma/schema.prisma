@@ -49,7 +49,6 @@ model Vote {
   id String @id @default(uuid())
   pollId String @map("poll_id")
   pollOptionId String @map("poll_option_id")
-  votedAt DateTime @default(now()) @map("voted_at")
   poll Poll @relation(fields: [pollId], references: [id])
   pollOption PollOption @relation(fields: [pollOptionId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")

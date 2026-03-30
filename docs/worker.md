@@ -93,8 +93,7 @@ Vote Event -> Worker -> PostgreSQL (persist)
 {
   "id": "uuid",
   "pollId": "uuid",
-  "pollOptionId": "uuid",
-  "votedAt": "2025-01-15T10:30:00Z"
+  "pollOptionId": "uuid"
 }
 ```
 

@@ -38,7 +38,6 @@ LivePool uses PostgreSQL as the primary database with Prisma as the ORM. The dat
                               │ id           │
                               │ pollId (FK)  │
                               │ pollOptionId │
-                              │ votedAt      │
                               │ createdAt    │
                               │ updatedAt    │
                               └─────────────┘
@@ -96,7 +95,6 @@ Represents a single vote (anonymous).
 | `id`           | UUID     | Primary key               |
 | `pollId`       | UUID     | Foreign key to Poll       |
 | `pollOptionId` | UUID     | Foreign key to PollOption |
-| `votedAt`      | DateTime | Vote timestamp            |
 | `createdAt`    | DateTime | Creation timestamp        |
 | `updatedAt`    | DateTime | Last update timestamp     |
 
@@ -162,7 +160,6 @@ model Vote {
   id            String      @id @default(uuid())
   pollId        String      @map("poll_id")
   pollOptionId  String      @map("poll_option_id")
-  votedAt       DateTime    @default(now()) @map("voted_at")
   poll          Poll        @relation(fields: [pollId], references: [id])
   pollOption    PollOption  @relation(fields: [pollOptionId], references: [id])
   createdAt     DateTime    @default(now()) @map("created_at")

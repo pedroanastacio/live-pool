@@ -76,12 +76,10 @@ The core event triggered when a vote is submitted.
 export class VoteCastEvent {
   readonly pollId: string;
   readonly pollOptionId: string;
-  readonly votedAt: Date;
 
   constructor(data: { pollId: string; pollOptionId: string }) {
     this.pollId = data.pollId;
     this.pollOptionId = data.pollOptionId;
-    this.votedAt = new Date();
   }
 }
 ```
@@ -145,8 +143,7 @@ export class VoteCastEventHandler implements IEventHandler<IEvent> {
 {
   "id": "uuid-v4",
   "pollId": "uuid-v4",
-  "pollOptionId": "uuid-v4",
-  "votedAt": "2025-01-15T10:30:00.000Z"
+  "pollOptionId": "uuid-v4"
 }
 ```
 
