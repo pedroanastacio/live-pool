@@ -6,6 +6,7 @@ import { PrismaModule } from '@live-pool/database';
 import { PollsModule } from '../polls/polls.module';
 import { VotesModule } from '../votes/votes.module';
 import { EventsModule } from '../../events/events.module';
+import { MessagingModule } from '../../messaging/messaging.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EventsModule } from '../../events/events.module';
     }),
     PrismaModule,
     EventsModule,
+    MessagingModule,
     PollsModule,
     VotesModule,
   ],

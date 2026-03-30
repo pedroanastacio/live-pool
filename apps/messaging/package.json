@@ -1,0 +1,21 @@
+{
+  "name": "@live-pool/messaging",
+  "version": "0.0.1",
+  "description": "Messaging module with RabbitMQ integration",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.4"
+  },
+  "devDependencies": {
+    "@live-pool/typescript-config": "workspace:*",
+    "@types/amqplib": "^0.10.5",
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.3"
+  }
+}

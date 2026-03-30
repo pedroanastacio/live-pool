@@ -14,5 +14,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: mq_rabbitmq
+    restart: always
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MGMT_PORT}:15672"
+    labels:
+      - environment=${RABBITMQ_ENV}
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   postgres_data:
+  rabbitmq_data:
