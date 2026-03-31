@@ -27,6 +27,7 @@ LivePool is a platform designed for streamers and content creators to create, ma
   <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" height="30"/>
   <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white" alt="RabbitMQ" height="30"/>
   <img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge" alt="WebSocket" height="30"/>
+<img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" height="30"/>
 </div>
 
 ### DevOps & Tools
@@ -36,4 +37,6 @@ LivePool is a platform designed for streamers and content creators to create, ma
   <img src="https://img.shields.io/badge/PNPM-F69220?style=for-the-badge&logo=pnpm&logoColor=white" alt="PNPM" height="30"/>
   <img src="https://img.shields.io/badge/Turborepo-000000?style=for-the-badge" alt="Turborepo" height="30"/>
   <img src="https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white" alt="Jest" height="30"/>
+  <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white" alt="Swagger" height="30"/>
+  <img src="https://img.shields.io/badge/Scalar-000000?style=for-the-badge" alt="Scalar" height="30"/>
 </div>
