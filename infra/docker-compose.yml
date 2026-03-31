@@ -6,7 +6,7 @@ services:
     ports:
       - "${DB_PORT}:5432"
     labels:
-      - environment=${DB_ENV}
+      - environment=${ENV}
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -22,13 +22,26 @@ services:
       - "${RABBITMQ_PORT}:5672"
       - "${RABBITMQ_MGMT_PORT}:15672"
     labels:
-      - environment=${RABBITMQ_ENV}
+      - environment=${ENV}
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  redis:
+    image: redis:7-alpine
+    container_name: cache_redis
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+    labels:
+      - environment=${ENV}
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
 volumes:
   postgres_data:
   rabbitmq_data:
+  redis_data:
