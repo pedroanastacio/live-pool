@@ -4,7 +4,7 @@ import { ConsumerService } from './services/consumer.service';
 import { isPast } from 'date-fns';
 import { PollStatus } from '@live-pool/database';
 
-const IDEMPOTENCY_TTL = parseInt(process.env.IDEMPOTENCY_TTL ?? '86400');
+const DEDUPLICATION_TTL = parseInt(process.env.DEDUPLICATION_TTL ?? '86400');
 
 export class WorkerApp {
   private db: DatabaseService;
@@ -94,7 +94,7 @@ export class WorkerApp {
       if (messageId) {
         await this.redis.setex(
           `processed:${messageId}`,
-          IDEMPOTENCY_TTL,
+          DEDUPLICATION_TTL,
           vote.id,
         );
       }
