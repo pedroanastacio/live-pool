@@ -12,6 +12,7 @@ describe('VoteCastEventHandler', () => {
   const voteData: CreateVoteDto = {
     pollId: 'test-poll-id',
     pollOptionId: 'test-option-id',
+    messageKey: 'test-message-key',
   };
 
   beforeEach(async () => {

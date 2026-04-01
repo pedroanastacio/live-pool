@@ -38,6 +38,7 @@ describe('Votes E2E', () => {
         .send({
           pollId: poll.id,
           pollOptionId: poll.options[0].id,
+          messageKey: poll.id,
         })
         .expect(200);
 
@@ -48,7 +49,11 @@ describe('Votes E2E', () => {
     it('should return 400 for invalid payload', async () => {
       await request(testApp.app.getHttpServer())
         .post(baseUrl)
-        .send({ pollId: 'id_teste', pollOptionId: 'id_teste' })
+        .send({
+          pollId: 'id_teste',
+          pollOptionId: 'id_teste',
+          messageKey: 'key_teste',
+        })
         .expect(400);
     });
   });

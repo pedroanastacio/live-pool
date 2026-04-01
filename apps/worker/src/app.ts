@@ -37,19 +37,17 @@ export class WorkerApp {
   private async handleVote(data: {
     pollId: string;
     pollOptionId: string;
-    messageId?: string;
+    messageKey: string;
   }): Promise<void> {
-    const { pollId, pollOptionId, messageId } = data;
+    const { pollId, pollOptionId, messageKey } = data;
 
     try {
-      if (messageId) {
-        const alreadyProcessed = await this.redis.exists(
-          `processed:${messageId}`,
-        );
-        if (alreadyProcessed) {
-          console.log(`Message ${messageId} already processed, skipping.`);
-          return;
-        }
+      const alreadyProcessed = await this.redis.exists(
+        `processed:${messageKey}`,
+      );
+      if (alreadyProcessed) {
+        console.log(`Message ${messageKey} already processed, skipping.`);
+        return;
       }
 
       const pollExists = await this.db.pollExists(pollId);
@@ -91,13 +89,11 @@ export class WorkerApp {
       const cacheKey = `vote_counts:${pollId}:${pollOptionId}`;
       await this.redis.increment(cacheKey);
 
-      if (messageId) {
-        await this.redis.setex(
-          `processed:${messageId}`,
-          DEDUPLICATION_TTL,
-          vote.id,
-        );
-      }
+      await this.redis.setex(
+        `processed:${messageKey}`,
+        DEDUPLICATION_TTL,
+        vote.id,
+      );
 
       console.log(`Vote ${vote.id} created for poll ${pollId}.`);
     } catch (error) {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateVoteDto {
   @IsUUID()
@@ -11,4 +11,9 @@ export class CreateVoteDto {
   @IsNotEmpty()
   @ApiProperty({ type: 'string', format: 'uuid' })
   pollOptionId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: 'string', format: 'uuid' })
+  messageKey: string;
 }

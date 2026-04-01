@@ -45,6 +45,7 @@ describe('Events', () => {
     const event = new VoteCastEvent({
       pollId: 'test-poll-id',
       pollOptionId: 'test-option-id',
+      messageKey: 'test-message-key',
     });
 
     await eventDispatcher.notify(event);
