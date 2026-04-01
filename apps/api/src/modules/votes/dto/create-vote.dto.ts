@@ -12,7 +12,7 @@ export class CreateVoteDto {
   @ApiProperty({ type: 'string', format: 'uuid' })
   pollOptionId: string;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   @ApiProperty({ type: 'string', format: 'uuid' })
   messageKey: string;
