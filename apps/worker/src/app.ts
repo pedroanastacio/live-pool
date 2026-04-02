@@ -1,8 +1,7 @@
 import { DatabaseService } from './services/database.service';
 import { RedisService } from './services/redis.service';
 import { ConsumerService } from './services/consumer.service';
-import { isPast } from 'date-fns';
-import { Poll, PollStatus, Vote } from '@live-pool/database';
+import { Vote } from '@live-pool/database';
 import { ValidationError, TransientError, ErrorCodes } from './errors';
 import { VoteMessage } from './types';
 
@@ -38,7 +37,7 @@ export class WorkerApp {
 
   private async handleVote(data: VoteMessage): Promise<void> {
     console.log(`[WORKER] Processing vote for poll ${data.pollId}`);
-    await this.validateVoteData(data);
+    await this.checkAlreadyProcessed(data.messageKey);
     const vote = await this.createVoteInDb(data.pollId, data.pollOptionId);
     await this.cacheVoteResult(
       data.pollId,
@@ -51,9 +50,7 @@ export class WorkerApp {
     );
   }
 
-  private async validateVoteData(data: VoteMessage): Promise<Poll> {
-    const { pollId, pollOptionId, messageKey } = data;
-
+  private async checkAlreadyProcessed(messageKey: string): Promise<void> {
     const alreadyProcessed = await this.redis.exists(`processed:${messageKey}`);
     if (alreadyProcessed) {
       throw new ValidationError(
@@ -61,50 +58,6 @@ export class WorkerApp {
         ErrorCodes.ALREADY_PROCESSED,
       );
     }
-
-    const pollExists = await this.db.pollExists(pollId);
-    if (!pollExists) {
-      throw new ValidationError(
-        `Poll ${pollId} not found`,
-        ErrorCodes.POLL_NOT_FOUND,
-      );
-    }
-
-    const poll = await this.db.findPollById(pollId);
-    if (!poll) {
-      throw new ValidationError(
-        `Poll ${pollId} not found`,
-        ErrorCodes.POLL_NOT_FOUND,
-      );
-    }
-
-    if (poll.status !== PollStatus.ACTIVE) {
-      throw new ValidationError(
-        `Poll ${pollId} is not active (status: ${poll.status})`,
-        ErrorCodes.POLL_NOT_ACTIVE,
-      );
-    }
-
-    if (isPast(poll.expiresAt)) {
-      throw new ValidationError(
-        `Poll ${pollId} has expired`,
-        ErrorCodes.POLL_EXPIRED,
-      );
-    }
-
-    const optionBelongs = await this.db.optionBelongsToPoll(
-      pollId,
-      pollOptionId,
-    );
-    if (!optionBelongs) {
-      throw new ValidationError(
-        `Option ${pollOptionId} does not belong to poll ${pollId}`,
-        ErrorCodes.OPTION_NOT_FOUND,
-      );
-    }
-
-    console.log(`[WORKER] Vote validated for poll ${pollId}`);
-    return poll;
   }
 
   private async createVoteInDb(
