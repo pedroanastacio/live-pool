@@ -5,16 +5,18 @@ import {
   OnModuleDestroy,
   Inject,
 } from '@nestjs/common';
-import { Producer } from '@live-pool/messaging';
+import { AmqpClient, Producer } from '@live-pool/messaging';
 
 export const PRODUCER_TOKEN = 'MESSAGING_PRODUCER';
 
 @Global()
 @Module({
   providers: [
+    AmqpClient,
     {
       provide: PRODUCER_TOKEN,
-      useClass: Producer,
+      useFactory: (amqpClient: AmqpClient) => new Producer(amqpClient),
+      inject: [AmqpClient],
     },
   ],
   exports: [PRODUCER_TOKEN],

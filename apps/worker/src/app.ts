@@ -37,19 +37,18 @@ export class WorkerApp {
   }
 
   private async handleVote(data: VoteMessage): Promise<void> {
-    try {
-      await this.validateVoteData(data);
-      const vote = await this.createVoteInDb(data.pollId, data.pollOptionId);
-      await this.cacheVoteResult(
-        data.pollId,
-        data.pollOptionId,
-        vote.id,
-        data.messageKey,
-      );
-      console.log(`Vote ${vote.id} created for poll ${data.pollId}.`);
-    } catch (error) {
-      this.handleError(error);
-    }
+    console.log(`[WORKER] Processing vote for poll ${data.pollId}`);
+    await this.validateVoteData(data);
+    const vote = await this.createVoteInDb(data.pollId, data.pollOptionId);
+    await this.cacheVoteResult(
+      data.pollId,
+      data.pollOptionId,
+      vote.id,
+      data.messageKey,
+    );
+    console.log(
+      `[WORKER] Vote ${vote.id} created successfully for poll ${data.pollId}`,
+    );
   }
 
   private async validateVoteData(data: VoteMessage): Promise<Poll> {
@@ -97,7 +96,6 @@ export class WorkerApp {
       pollId,
       pollOptionId,
     );
-
     if (!optionBelongs) {
       throw new ValidationError(
         `Option ${pollOptionId} does not belong to poll ${pollId}`,
@@ -105,6 +103,7 @@ export class WorkerApp {
       );
     }
 
+    console.log(`[WORKER] Vote validated for poll ${pollId}`);
     return poll;
   }
 
@@ -141,19 +140,5 @@ export class WorkerApp {
         `Failed to cache vote result for poll ${pollId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
-  }
-
-  private handleError(error: unknown): void {
-    if (error instanceof ValidationError) {
-      console.error(`[VALIDATION] ${error.code}: ${error.message}`);
-      return;
-    }
-
-    if (error instanceof TransientError) {
-      console.error(`[TRANSIENT] ${error.message}`);
-      return;
-    }
-
-    console.error('[UNKNOWN]', error);
   }
 }

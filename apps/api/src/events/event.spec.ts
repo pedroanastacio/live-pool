@@ -1,19 +1,16 @@
 import { EventDispatcher } from './event-dispatcher';
 import { VoteCastEventHandler } from './handlers';
 import { VoteCastEvent } from './classes';
+import { Producer } from '@live-pool/messaging';
 
 describe('Events', () => {
   let mockProducer: {
     publish: jest.Mock;
-    connect: jest.Mock;
-    close: jest.Mock;
   };
 
   beforeAll(() => {
     mockProducer = {
       publish: jest.fn(),
-      connect: jest.fn(),
-      close: jest.fn(),
     };
   });
 
@@ -23,7 +20,9 @@ describe('Events', () => {
 
   it('should register an event', () => {
     const eventDispatcher = new EventDispatcher();
-    const eventHandler = new VoteCastEventHandler(mockProducer);
+    const eventHandler = new VoteCastEventHandler(
+      mockProducer as unknown as Producer,
+    );
 
     eventDispatcher.register(VoteCastEvent.name, eventHandler);
 
@@ -37,7 +36,9 @@ describe('Events', () => {
 
   it('should notify when an event is dispatched', async () => {
     const eventDispatcher = new EventDispatcher();
-    const eventHandler = new VoteCastEventHandler(mockProducer);
+    const eventHandler = new VoteCastEventHandler(
+      mockProducer as unknown as Producer,
+    );
     const spyEventHandler = jest.spyOn(eventHandler, 'handle');
 
     eventDispatcher.register(VoteCastEvent.name, eventHandler);

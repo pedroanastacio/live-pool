@@ -1,25 +1,21 @@
-import * as amqp from 'amqplib';
+import { AmqpClient } from '../amqp-client';
 import { Exchanges } from '../types';
 
 export class Producer {
-  private connection?: amqp.ChannelModel;
-  private channel?: amqp.Channel;
+  private readonly amqpClient: AmqpClient;
+
+  constructor(amqpClient: AmqpClient) {
+    this.amqpClient = amqpClient;
+  }
 
   async connect(url: string): Promise<void> {
-    this.connection = await amqp.connect(url);
-    this.channel = await this.connection.createChannel();
-
-    await this.channel.assertExchange(Exchanges.VOTES, 'direct', {
-      durable: true,
-    });
+    await this.amqpClient.connect(url);
+    await this.amqpClient.setupExchanges();
   }
 
   publish(routingKey: string, message: object): boolean {
-    if (!this.channel) {
-      throw new Error('Channel not initialized. Call connect() first.');
-    }
-
-    return this.channel.publish(
+    const channel = this.amqpClient.getChannel();
+    return channel.publish(
       Exchanges.VOTES,
       routingKey,
       Buffer.from(JSON.stringify(message)),
@@ -28,12 +24,6 @@ export class Producer {
   }
 
   async close(): Promise<void> {
-    if (this.channel) {
-      await this.channel.close();
-    }
-
-    if (this.connection) {
-      await this.connection.close();
-    }
+    await this.amqpClient.close();
   }
 }

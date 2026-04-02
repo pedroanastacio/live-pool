@@ -1,56 +1,79 @@
 import * as amqp from 'amqplib';
-import { QUEUES } from '../config';
-import { Exchanges, MessageHandler } from '../types';
+import { QUEUES, RETRY_CONFIG } from '../config';
+import { IQueuesConfig, MessageHandler, RetryOptions } from '../types';
+import { AmqpClient } from '../amqp-client';
+import { RetryHandler } from './retry-handler';
+import { DlqDecider } from './dlq-decider';
+import { MessageProcessor } from './message-processor';
 
 export class Consumer {
-  private connection?: amqp.ChannelModel;
-  private channel?: amqp.Channel;
+  private readonly amqpClient: AmqpClient;
+  private readonly retryHandler: RetryHandler;
+  private readonly dlqDecider: DlqDecider;
+  private readonly messageProcessor: MessageProcessor;
+  private readonly queueConfig: Record<string, IQueuesConfig>;
+  private readonly retryConfigDefault: typeof RETRY_CONFIG;
 
-  async connect(url: string): Promise<void> {
-    this.connection = await amqp.connect(url);
-    this.channel = await this.connection.createChannel();
-
-    await this.channel.assertExchange(Exchanges.VOTES, 'direct', {
-      durable: true,
-    });
+  constructor(
+    amqpClient: AmqpClient,
+    queueConfig: Record<string, IQueuesConfig> = QUEUES,
+    retryConfigDefault: typeof RETRY_CONFIG = RETRY_CONFIG,
+  ) {
+    this.amqpClient = amqpClient;
+    this.queueConfig = queueConfig;
+    this.retryConfigDefault = retryConfigDefault;
+    this.retryHandler = new RetryHandler();
+    this.dlqDecider = new DlqDecider();
+    this.messageProcessor = new MessageProcessor(
+      this.retryHandler,
+      this.dlqDecider,
+    );
   }
 
-  async consume(queueName: string, handler: MessageHandler): Promise<void> {
-    if (!this.channel) {
-      throw new Error('Channel not initialized. Call connect() first.');
-    }
+  async connect(url: string): Promise<void> {
+    await this.amqpClient.connect(url);
+    await this.amqpClient.setupExchanges();
+    await this.amqpClient.setupDeadLetterQueues(this.queueConfig);
+  }
 
-    const queue = Object.values(QUEUES).find((q) => q.name === queueName);
+  async consume(
+    queueName: string,
+    handler: MessageHandler,
+    retryOptions?: Partial<RetryOptions>,
+  ): Promise<void> {
+    const queue = Object.values(this.queueConfig).find(
+      (q) => q.name === queueName,
+    );
+
     if (!queue) {
       throw new Error(`Queue ${queueName} not found in QUEUES config`);
     }
 
-    await this.channel.assertQueue(queueName, { durable: true });
-    await this.channel.bindQueue(queueName, queue.exchange, queue.routingKey);
+    const channel = this.amqpClient.getChannel();
+    await this.amqpClient.setupQueue(channel, queueName, queue);
 
-    await this.channel.consume(queueName, (msg: amqp.ConsumeMessage | null) => {
-      if (msg) {
-        void (async () => {
-          try {
-            const content = JSON.parse(msg.content.toString()) as object;
-            await handler(content);
-            this.channel?.ack(msg);
-          } catch (error) {
-            console.error('Error processing message:', error);
-            this.channel?.nack(msg, false, false);
-          }
-        })();
-      }
+    const retryConfig = this.createRetryConfig(retryOptions);
+
+    await channel.consume(queueName, (msg: amqp.ConsumeMessage | null) => {
+      if (!msg) return;
+      void this.messageProcessor.process(msg, handler, retryConfig, channel);
     });
   }
 
   async close(): Promise<void> {
-    if (this.channel) {
-      await this.channel.close();
-    }
+    await this.amqpClient.close();
+  }
 
-    if (this.connection) {
-      await this.connection.close();
-    }
+  private createRetryConfig(
+    retryOptions?: Partial<RetryOptions>,
+  ): RetryOptions {
+    return {
+      maxAttempts:
+        retryOptions?.maxAttempts ?? this.retryConfigDefault.maxAttempts,
+      baseDelayMs:
+        retryOptions?.baseDelayMs ?? this.retryConfigDefault.baseDelayMs,
+      maxDelayMs:
+        retryOptions?.maxDelayMs ?? this.retryConfigDefault.maxDelayMs,
+    };
   }
 }
