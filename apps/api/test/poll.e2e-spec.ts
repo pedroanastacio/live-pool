@@ -280,7 +280,7 @@ describe('Polls E2E', () => {
           .get(`${baseUrl}?status=${PollStatus.ACTIVE}`)
           .expect(200);
 
-        const polls = response.body;
+        const polls = response.body as Poll[];
         expect(polls.length).toBeGreaterThan(0);
         expect(polls.every((p) => p.status === PollStatus.ACTIVE)).toBe(true);
       });
@@ -290,7 +290,7 @@ describe('Polls E2E', () => {
           .get(`${baseUrl}?status=${PollStatus.CLOSED}`)
           .expect(200);
 
-        const polls = response.body;
+        const polls = response.body as Poll[];
         expect(polls.length).toBeGreaterThan(0);
         expect(polls.every((p) => p.status === PollStatus.CLOSED)).toBe(true);
       });
@@ -300,7 +300,7 @@ describe('Polls E2E', () => {
           .get(`${baseUrl}?status=${PollStatus.CANCELLED}`)
           .expect(200);
 
-        const polls = response.body;
+        const polls = response.body as Poll[];
         expect(polls.length).toBeGreaterThan(0);
         expect(polls.every((p) => p.status === PollStatus.CANCELLED)).toBe(
           true,
