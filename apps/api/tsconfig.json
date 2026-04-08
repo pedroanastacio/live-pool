@@ -2,6 +2,7 @@
   "extends": "@live-pool/typescript-config/node.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": "./"
+    "strictPropertyInitialization": false,
+    "types": ["node", "jest"]
   }
 }

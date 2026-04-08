@@ -1,4 +1,4 @@
-import { CreateVoteDto } from 'src/modules/votes/dto';
+import { CreateVoteDto } from '../../modules/votes/dto';
 import { IEvent } from '../types';
 
 export class VoteCastEvent implements IEvent {

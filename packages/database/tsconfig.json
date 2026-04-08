@@ -5,7 +5,6 @@
     "moduleResolution": "node",
     "resolvePackageJsonExports": false,
     "outDir": "./dist",
-    "baseUrl": "./",
     "declaration": true
   },
   "include": ["src", "prisma.config.ts"],

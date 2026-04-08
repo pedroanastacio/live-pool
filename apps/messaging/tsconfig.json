@@ -5,8 +5,8 @@
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "ES2022"
   },
   "include": ["src/**/*"],
