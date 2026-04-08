@@ -4,7 +4,7 @@ import { VoteCastEventHandler } from './vote-cast.handler';
 import { VoteCastEvent } from '../classes';
 import { PRODUCER_TOKEN } from '../../messaging/messaging.module';
 import { QUEUES } from '@live-pool/messaging';
-import { CreateVoteDto } from 'src/modules/votes/dto';
+import { CreateVoteDto } from '../../modules/votes/dto/create-vote.dto';
 
 describe('VoteCastEventHandler', () => {
   let handler: VoteCastEventHandler;
