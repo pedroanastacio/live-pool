@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService, Poll } from '@live-pool/database';
-import { CreatePollDto } from './dto/create-poll.dto';
-import { UpdatePollDto } from './dto/update-poll.dto';
 import {
+  CreatePollDto,
+  UpdatePollDto,
   PollResponseDto,
   PollDeleteResponseDto,
-} from './dto/poll-response.dto';
-import { PollsQueryDto } from './dto/polls-query.dto';
+  PollsQueryDto,
+} from './dto';
 import { parseISO, startOfDay, endOfDay } from 'date-fns';
 
 @Injectable()

@@ -11,13 +11,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { PollsService } from './polls.service';
-import { CreatePollDto } from './dto/create-poll.dto';
-import { UpdatePollDto } from './dto/update-poll.dto';
 import {
+  CreatePollDto,
+  UpdatePollDto,
   PollResponseDto,
   PollDeleteResponseDto,
-} from './dto/poll-response.dto';
-import { PollsQueryDto } from './dto/polls-query.dto';
+  PollsQueryDto,
+} from './dto';
 import { Poll } from '@live-pool/database';
 import { ApiResponse } from '@nestjs/swagger';
 

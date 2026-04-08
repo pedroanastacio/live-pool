@@ -6,8 +6,7 @@ import {
 import { PrismaService, PollStatus } from '@live-pool/database';
 import { EventDispatcher, VoteCastEvent } from '../../events';
 import { isPast } from 'date-fns';
-import { CreateVoteDto } from './dto/create-vote.dto';
-import { VoteResponseDto } from './dto';
+import { VoteResponseDto, CreateVoteDto } from './dto';
 
 @Injectable()
 export class VotesService {

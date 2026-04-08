@@ -1,8 +1,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 
-import { CreateVoteDto } from './dto/create-vote.dto';
 import { VotesService } from './votes.service';
-import { VoteResponseDto } from './dto';
+import { VoteResponseDto, CreateVoteDto } from './dto';
 import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('votes')
