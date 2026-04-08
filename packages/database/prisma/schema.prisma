@@ -37,10 +37,10 @@ model PollOption {
   description String
   ordeIndex Int @map("order_index")
   pollId String @map("poll_id")
-  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
   votes Vote[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
 
   @@map("poll_option")
 }
@@ -49,10 +49,49 @@ model Vote {
   id String @id @default(uuid())
   pollId String @map("poll_id")
   pollOptionId String @map("poll_option_id")
-  poll Poll @relation(fields: [pollId], references: [id])
-  pollOption PollOption @relation(fields: [pollOptionId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  poll Poll @relation(fields: [pollId], references: [id])
+  pollOption PollOption @relation(fields: [pollOptionId], references: [id])
 
   @@map("vote")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("user")
+}
+
+model Account {
+  id                String   @id @default(uuid())
+  userId            String   @map("user_id")
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("account")
+}
+
+model Session {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  refreshToken     String?  @unique @map("refresh_token") @db.Text
+  expiresAt        DateTime @map("expires_at")
+  refreshExpiresAt DateTime @map("refresh_expires_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
 }
