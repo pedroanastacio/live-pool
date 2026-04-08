@@ -6,6 +6,8 @@ import {
   PollResponseDto,
   PollDeleteResponseDto,
 } from './dto/poll-response.dto';
+import { PollsQueryDto } from './dto/polls-query.dto';
+import { parseISO, startOfDay, endOfDay } from 'date-fns';
 
 @Injectable()
 export class PollsService {
@@ -35,17 +37,68 @@ export class PollsService {
     });
   }
 
-  async findAll(): Promise<PollResponseDto[]> {
+  async findAll(query: PollsQueryDto): Promise<PollResponseDto[]> {
+    const {
+      search,
+      status,
+      expiresBefore,
+      expiresAfter,
+      expiresAt,
+      sortBy,
+      order,
+    } = query;
+
+    const where: Record<string, unknown> = {};
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (expiresBefore) {
+      where.expiresAt = {
+        ...(where.expiresAt as object),
+        lt: new Date(expiresBefore),
+      };
+    }
+
+    if (expiresAfter) {
+      where.expiresAt = {
+        ...(where.expiresAt as object),
+        gt: new Date(expiresAfter),
+      };
+    }
+
+    if (expiresAt) {
+      const parsedDate = parseISO(expiresAt);
+      where.expiresAt = {
+        gte: startOfDay(parsedDate),
+        lte: endOfDay(parsedDate),
+      };
+    }
+
+    const orderBy: Record<string, string> = {};
+    if (sortBy) {
+      orderBy[sortBy] = order || 'desc';
+    } else {
+      orderBy.createdAt = 'desc';
+    }
+
     return await this.prisma.poll.findMany({
+      where,
+      orderBy,
       include: {
         options: {
           orderBy: {
             ordeIndex: 'asc',
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
       },
     });
   }

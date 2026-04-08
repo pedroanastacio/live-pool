@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
   PollResponseDto,
   PollDeleteResponseDto,
 } from './dto/poll-response.dto';
+import { PollsQueryDto } from './dto/polls-query.dto';
 import { Poll } from '@live-pool/database';
 import { ApiResponse } from '@nestjs/swagger';
 
@@ -31,8 +33,8 @@ export class PollsController {
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: PollResponseDto, isArray: true })
-  findAll(): Promise<PollResponseDto[]> {
-    return this.pollsService.findAll();
+  findAll(@Query() query: PollsQueryDto): Promise<PollResponseDto[]> {
+    return this.pollsService.findAll(query);
   }
 
   @Get(':id')
