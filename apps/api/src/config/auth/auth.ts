@@ -1,6 +1,8 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { redisStorage } from '@better-auth/redis-storage';
 import { PrismaService } from '@live-pool/database';
+import type Redis from 'ioredis';
 
 const {
   BETTER_AUTH_URL,
@@ -11,12 +13,19 @@ const {
   KICK_CLIENT_SECRET,
 } = process.env;
 
-export const createAuth = (prismaService: PrismaService) => {
+export const createAuth = (
+  prismaService: PrismaService,
+  redisClient: Redis,
+) => {
   const baseURL = BETTER_AUTH_URL ?? '';
 
   return betterAuth({
     database: prismaAdapter(prismaService, {
       provider: 'postgresql',
+    }),
+    secondaryStorage: redisStorage({
+      client: redisClient,
+      keyPrefix: 'better-auth:',
     }),
     baseURL,
     emailAndPassword: {
@@ -33,13 +42,11 @@ export const createAuth = (prismaService: PrismaService) => {
       },
     },
     session: {
-      expiresIn: 60 * 5, // 5 minutes (access token)
-      updateAge: 60 * 60, // 1 hour (how often to check/extend session)
+      expiresIn: 60 * 60 * 24 * 3,
+      updateAge: 60 * 60 * 24,
+      storeSessionInDatabase: true,
     },
     trustedOrigins: [AUTH_URL ?? ''],
     basePath: '/api/auth',
   });
 };
-
-export const auth = createAuth;
-export type Auth = typeof auth;

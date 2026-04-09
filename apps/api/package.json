@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@better-auth/redis-storage": "^1.6.2",
     "@live-pool/database": "workspace:*",
     "@live-pool/messaging": "workspace:*",
     "@live-pool/typescript-config": "workspace:*",

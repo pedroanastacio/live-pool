@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { VoteCastEventHandler } from './vote-cast.handler';
 import { VoteCastEvent } from '../classes';
-import { PRODUCER_TOKEN } from '../../messaging/messaging.module';
+import { PRODUCER_TOKEN } from '../../config/messaging/messaging.module';
 import { QUEUES } from '@live-pool/messaging';
 import { CreateVoteDto } from '../../modules/votes/dto/create-vote.dto';
 

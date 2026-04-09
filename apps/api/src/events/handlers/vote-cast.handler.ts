@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { IEventHandler, IEvent } from '../types';
 import { VoteCastEvent } from '../classes';
 import { Producer, QUEUES } from '@live-pool/messaging';
-import { PRODUCER_TOKEN } from '../../messaging/messaging.module';
+import { PRODUCER_TOKEN } from '../../config/messaging/messaging.module';
 
 @Injectable()
 export class VoteCastEventHandler implements IEventHandler<IEvent> {

@@ -7,7 +7,9 @@ import { PrismaModule, PrismaService } from '@live-pool/database';
 import { PollsModule } from '../polls/polls.module';
 import { VotesModule } from '../votes/votes.module';
 import { EventsModule } from '../../events/events.module';
-import { MessagingModule } from '../../messaging/messaging.module';
+import { MessagingModule } from '../../config/messaging/messaging.module';
+import { RedisModule } from '../../config/redis/redis.module';
+import { RedisService } from '../../config/redis/redis.service';
 import { createAuth } from '../../config/auth/auth';
 
 @Module({
@@ -16,14 +18,18 @@ import { createAuth } from '../../config/auth/auth';
       isGlobal: true,
     }),
     PrismaModule,
+    RedisModule,
     EventsModule,
     MessagingModule,
     PollsModule,
     VotesModule,
     AuthModule.forRootAsync({
-      inject: [PrismaService],
-      useFactory: (prismaService: PrismaService) => ({
-        auth: createAuth(prismaService),
+      inject: [PrismaService, RedisService],
+      useFactory: (
+        prismaService: PrismaService,
+        redisService: RedisService,
+      ) => ({
+        auth: createAuth(prismaService, redisService.client),
       }),
     }),
   ],
